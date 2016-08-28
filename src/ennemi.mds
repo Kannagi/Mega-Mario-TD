@@ -125,7 +125,7 @@ HitEnnemy:
 
 	lea MarioArmyst,a2
 	
-	move.w 15,d5
+	move.w #15,d5
 	do
 		add.w	#8,a2
 		move.w (a2),d7
