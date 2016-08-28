@@ -1,0 +1,30 @@
+
+	org	$000000
+	dc.l	$0,Main
+	dc.l	INT,INT,INT,INT,INT,INT,INT
+	dc.l	INT,INT,INT,INT,INT,INT,INT,INT
+	dc.l	INT,INT,INT,INT,INT,INT,INT,INT
+	dc.l	INT,INT,INT,HBlank,INT,VBlank,INT,INT
+	dc.l	INT,INT,INT,INT,INT,INT,INT,INT
+	dc.l	INT,INT,INT,INT,INT,INT,INT,INT
+	dc.l	INT,INT,INT,INT,INT,INT,INT,INT
+	dc.l	INT,INT,INT,INT,INT,INT,INT
+
+	dc.b	'SEGA MEGA DRIVE '						; Console name. 16 bytes long
+	dc.b	'(C)SEGA 2005.APR'						; Copyright notice. 16 bytes long
+	dc.b	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	dc.b	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	dc.b	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; Domestic game name. 48 bytes long
+	dc.b	'ob',$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	dc.b	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	dc.b	$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00	; Overseas game name. 48 bytes long
+	dc.b	'GM'								; Type of product. 2 bytes long
+	dc.b	' 00000000-00'							; Product code, version number. 12 bytes long
+	dc.w	$FDDB								; Checksum. 2 bytes long
+	dc.b	'J               '						; I/O support. 16 bytes
+	dc.l	$00000000,$00020000						; ROM capacity (start, end). 4 bytes long each.
+	dc.l	$00FF0000,$FFFFFFFF						; RAM (start, end). 4 bytes long each
+	dc.b	'            '							; Padder. 12 bytes long
+	dc.b	'            '							; Modem. 12 bytes long
+	dc.b	'                                        '			; Memo. 40 bytes long
+	dc.b	'E               '						; Country game. 16 bytes long

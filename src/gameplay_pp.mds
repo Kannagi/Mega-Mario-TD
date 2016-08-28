@@ -1,0 +1,194 @@
+
+Gameplay_pop:
+
+	move.w	#$0820,d2
+	add.w	SelectChoix,d2
+	add.w	SelectChoix,d2
+	add.w	SelectChoix,d2
+	add.w	SelectChoix,d2
+	
+	lea MarioArmyst,a0
+	lea MarioArmy,a1
+	move.w	#15,d0
+	do
+		move.l	a0,a3
+		add.w	#$2,a3
+		move.w	(a3),d3
+		cmp.w	d6,d3
+		if_ne
+				move.w (a0),d1
+				cmp.w #1,d1
+				if_ne
+					move.l	a1,a2
+					move.w	#0,(a2)+
+					move.w	#$0,(a0)  ;remove de l'écran
+					
+					
+					
+					subi.w 	#$1,MarioNb
+					
+					
+					move.b	(a6),d3
+					
+					cmp.b	#2,d3
+					if_ne
+						addi.w	#5,Argent
+					endi
+					
+					cmp.b	#3,d3
+					if_ne
+						addi.w	#10,Argent
+					endi
+					
+					cmp.b	#4,d3
+					if_ne
+						addi.w	#15,Argent
+					endi
+					
+					cmp.b	#5,d3
+					if_ne
+						addi.w	#20,Argent
+					endi
+					
+					cmp.b	#6,d3
+					if_ne
+						addi.w	#25,Argent
+					endi
+					
+					move.b	#$0,(a6)  ;0 dans le tableau
+					
+					
+					rts
+				endi
+			
+			
+		
+		endi
+		
+		add.w	#6,a1
+		add.w	#$10,a0
+		
+    while_dbra d0
+	
+	
+	
+	
+	rts
+	
+Gameplay_push:
+
+	
+	move.w	#$0020,d2
+	add.w	SelectChoix,d2
+	add.w	SelectChoix,d2
+	add.w	SelectChoix,d2
+	add.w	SelectChoix,d2
+	
+	lea MarioArmyst,a0
+	lea MarioArmy,a1
+	move.w	#15,d0
+	do
+		move.l	a0,a3
+		move.w (a0),d1
+		
+		move.w	Argent,d3
+		cmp.w	#0,SelectChoix
+		if_ne
+			subi.w	#10,d3
+		endi
+		
+		cmp.w	#1,SelectChoix
+		if_ne
+			subi.w	#20,d3
+		endi
+		
+		cmp.w	#2,SelectChoix
+		if_ne
+			subi.w	#30,d3
+		endi
+		
+		cmp.w	#3,SelectChoix
+		if_ne
+			subi.w	#40,d3
+		endi
+		
+		cmp.w	#4,SelectChoix
+		if_ne
+			subi.w	#50,d3
+		endi
+	
+		cmp.w	#0,d3
+		if_mi
+			cmp.b	#0,(a6)
+			if_ne
+				
+				
+				cmp.w #0,d1
+				if_ne
+					move.l	a1,a2
+					move.w	Selecty,(a2)+
+					move.w	Selectx,(a2)+
+					move.w	d2,(a2)
+					move.w	#$1,(a3) ;est a l'écran
+					add.w	#$2,a3
+					move.w	d6,(a3)	; position tableau
+					add.w	#$2,a3
+					move.w	#$0,(a3) ;init variable attack
+					add.w	#$6,a3  
+					
+					addi.w 	#$1,MarioNb
+					
+					cmp.w	#0,SelectChoix
+					if_ne
+						subi.w	#10,Argent
+						move.b	#$2,(a6)
+						
+						move.w	#1,(a3)
+					endi
+					
+					cmp.w	#1,SelectChoix
+					if_ne
+						subi.w	#20,Argent
+						move.b	#$3,(a6)
+						move.w	#2,(a3)
+					endi
+					
+					cmp.w	#2,SelectChoix
+					if_ne
+						subi.w	#30,Argent
+						move.b	#$4,(a6)
+						move.w	#3,(a3)
+						
+					endi
+					
+					cmp.w	#3,SelectChoix
+					if_ne
+						subi.w	#40,Argent
+						move.b	#$5,(a6)
+						move.w	#4,(a3)
+					endi
+					
+					cmp.w	#4,SelectChoix
+					if_ne
+						subi.w	#50,Argent
+						move.b	#$6,(a6)
+						move.w	#5,(a3)
+					endi
+					
+					
+					
+					rts
+				endi
+			
+			endi
+		endi
+		add.w	#6,a1
+		add.w	#$10,a0
+		
+    while_dbra d0
+	
+	
+	
+	
+	rts
+	

@@ -1,0 +1,99 @@
+
+init:
+
+	;init JS
+	moveq	#$40,d0
+	move.b	d0,$a10009
+	move.b	d0,$a1000b
+	move.b	d0,$a1000d
+	move.b	d0,$a10003
+	
+	;variable
+	move.w	#$80,SelectChoixOld
+	
+	move.w	#$F0,SelectyOld
+	move.w	#$F0,SelectxOld
+	
+	move.w	#20,MarioPV
+	move.w	#20,Argent
+	
+	;init ennnemy army
+	move.w	#$0,EnemyChange
+	
+	
+    jsr Init_Ennemy
+
+	
+	;chargement tableau map collision
+	lea	map_collision_rom,a2
+	lea map_collision,a1
+	move.w	#4*16*3,d0
+	do
+		move.b	(a2)+,(a1)+
+    while_dbra d0
+
+	rts
+	
+Init_Ennemy:
+
+	move.w	#$2040,d3
+	add.w	EnemyChange,d3
+	move.w	#$70,d2
+	move.w	#$0,d4
+	add.w TourNb,d4
+	
+	
+	lea EnemyArmy,a1
+	move.w	#9,d0
+	do
+		move.w	#$E0,(a1)+
+		move.w	d2,(a1)+
+		move.w	d3,(a1)+
+		move.w	d4,(a1)+
+		subi.w	#$18,d2
+    while_dbra d0
+    
+    VDP_Port_CRAMW #$0020
+    
+    lea palette_goomba,a2
+    
+    cmp.w	#8*1,EnemyChange
+    if_ne
+		lea palette_meduse,a2
+    endi
+    
+    cmp.w	#8*2,EnemyChange
+    if_ne
+		lea palette_fantome,a2
+    endi
+    
+    cmp.w	#8*3,EnemyChange
+    if_ne
+		lea palette_flame,a2
+    endi
+    
+    cmp.w	#8*4,EnemyChange
+    if_ne
+		lea palette_chien,a2
+    endi
+    
+    cmp.w	#8*5,EnemyChange
+    if_ne
+		lea palette_bomb,a2
+    endi
+    
+    move.w	#16-1,d0
+	do
+		move.w	(a2)+,VDP_DATA
+    while_dbra d0
+    VDP_Port_CRAMW #$0040
+    
+    add.w #8,EnemyChange
+    
+    cmp.w	#8*6,EnemyChange
+    if_mi
+		clr.w EnemyChange
+    endi
+    
+	rts
+	

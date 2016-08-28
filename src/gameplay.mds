@@ -1,0 +1,225 @@
+
+Gameplay_Map:
+
+	cmp.w	#1,Selectm
+	if_ne
+		add.w #1,Selectm
+		rts
+	endi
+
+	cmp.w	#2,Selectm
+	if_eq
+		rts
+	endi
+	
+	lea	map_collision,a0
+    
+    move.w Selectx,d0
+    subi.w	#$80,d0
+    lsr.w	#4,d0
+
+    move.w Selecty,d1
+    subi.w	#$C0,d1
+    
+    
+    add.w d0,d1
+    add.w d1,a0
+    move.w d1,d6
+    move.l a0,a6
+    
+    
+    
+    
+    ;Select
+    cmp.b	#0,(a6)
+	if_eq
+		move.w	#$0838,SelectTile
+	else_
+		move.w	#$0834,SelectTile
+	endie
+	
+
+	cmp.w	#0,SelectInit
+	if_ne
+		move.w	SelectyOld,Selecty
+		move.w	SelectxOld,Selectx
+		move.w	#$1,SelectInit
+	endi
+	
+	move.b	MEM_STDCTRL+_C,d1
+	cmp.b	#1,d1
+	if_ne
+		move.w	#$0,Selectm
+		move.w	#$0,SelectInit
+	endi
+	
+	;Mario
+	move.b	MEM_STDCTRL+_A,d1
+	cmp.b	#1,d1
+	if_ne
+		jsr Gameplay_push
+		
+	endi
+	
+	move.b	MEM_STDCTRL+_B,d1
+	cmp.b	#1,d1
+	if_ne
+		jsr Gameplay_pop
+		
+	endi
+
+	;move cursor
+	move.b	MEM_STDCTRL+_UP,d1
+	cmp.b	#1,d1
+	if_ne
+		sub.w	#$10,Selecty
+		clr.w SelectTmp
+	endi
+	
+	cmp #0,SelectTmp
+	if_ne
+		
+		cmp.b	#2,d1
+		if_ne
+			
+			sub.w	#$10,Selecty
+		endi
+	endi
+	
+	move.b	MEM_STDCTRL+_DN,d1
+	cmp.b	#1,d1
+	if_ne
+		add.w	#$10,Selecty
+		clr.w SelectTmp
+	endi
+	
+	cmp #0,SelectTmp
+	if_ne
+		
+		cmp.b	#2,d1
+		if_ne
+			
+			add.w	#$10,Selecty
+		endi
+	endi
+	
+	move.b	MEM_STDCTRL+_LT,d1
+	cmp.b	#1,d1
+	if_ne
+		sub.w	#$10,Selectx
+		clr.w SelectTmp
+	endi
+	
+	cmp #0,SelectTmp
+	if_ne
+		
+		cmp.b	#2,d1
+		if_ne
+			
+			sub.w	#$10,Selectx
+		endi
+	endi
+	
+	move.b	MEM_STDCTRL+_RG,d1
+	cmp.b	#1,d1
+	if_ne
+		add.w	#$10,Selectx
+		clr.w SelectTmp
+	endi
+	
+	cmp #0,SelectTmp
+	if_ne
+		
+		cmp.b	#2,d1
+		if_ne
+			
+			add.w	#$10,Selectx
+		endi
+	endi
+	
+	;limite map
+	cmp.w	#$80,Selectx
+	if_pl
+		move.w	#$80,Selectx
+	endi
+	
+	cmp.w	#$170,Selectx
+	if_mi
+		move.w	#$170,Selectx
+	endi
+	
+	cmp.w	#$C0,Selecty
+	if_pl
+		move.w	#$C0,Selecty
+	endi
+	
+	cmp.w	#$160,Selecty
+	if_mi
+		move.w	#$160,Selecty
+	endi
+	
+	move.w	Selecty,SelectyOld
+	move.w	Selectx,SelectxOld
+
+	rts
+	
+	
+Gameplay_Select:
+
+	
+
+	cmp.w	#0,Selectm
+	if_eq
+		rts
+	endi
+	
+	move.w	#$081C,SelectTile
+
+	cmp.w	#0,SelectInit
+	if_ne
+		move.w	#$91,Selecty
+		
+		move.w	#$1,SelectInit
+		move.w	SelectChoixOld,Selectx
+	endi
+	
+	
+	
+	move.b	MEM_STDCTRL+_C,d1
+	cmp.b	#1,d1
+	if_ne
+		move.w	#$1,Selectm
+		move.w	#$0,SelectInit
+	endi
+
+	
+	move.b	MEM_STDCTRL+_LT,d1
+	cmp.b	#1,d1
+	if_ne
+		sub.w	#$18,Selectx
+		sub.w	#$1,SelectChoix
+	endi
+	
+	move.b	MEM_STDCTRL+_RG,d1
+	cmp.b	#1,d1
+	if_ne
+		add.w	#$18,Selectx
+		add.w	#$1,SelectChoix
+	endi
+	
+	;limite Select
+	cmp.w	#$93,Selectx
+	if_pl
+		move.w	#$93,Selectx
+		move.w	#$00,SelectChoix
+	endi
+	
+	cmp.w	#$F3,Selectx
+	if_mi
+		move.w	#$F3,Selectx
+		move.w	#$04,SelectChoix
+	endi
+	
+	move.w	Selectx,SelectChoixOld
+	
+	rts

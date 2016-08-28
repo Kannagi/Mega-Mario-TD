@@ -1,0 +1,20 @@
+
+VBlank:
+
+	
+
+
+	addq.l	#1,vtimer
+	rte
+	
+vsync:
+
+	
+	
+	
+	move.l	vtimer,d0
+vsloop:
+	cmp.l	vtimer,d0
+	beq	vsloop
+
+	rts

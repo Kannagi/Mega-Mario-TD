@@ -1,0 +1,209 @@
+
+
+Mario_Path_ATK_Down:
+
+	move.l	a5,a6
+	add.w	#$10,a6
+	
+	
+	cmp.b	#1,(a6)
+	if_eq
+		rts
+	endi
+	
+	move.w	#1,d3
+	
+
+	add.w	#$10,d2
+	move.w	d2,(a1)
+
+	
+	move.l	a0,a1
+	;haut
+	cmp.w	#23,d7
+	if_pl
+		add.w	d1,(a1)+
+		rts
+	endi
+	
+	sub.w	#2,(a1)+
+
+	rts
+	
+Mario_Path_ATK_Up:
+
+	move.l	a5,a6
+	sub.w	#$10,a6
+	
+	
+	cmp.b	#1,(a6)
+	if_eq
+		rts
+	endi
+	
+	move.w	#1,d3
+	
+
+	sub.w	#$10,d2
+	move.w	d2,(a1)
+
+	
+	move.l	a0,a1
+	;haut
+	cmp.w	#23,d7
+	if_pl
+		sub.w	d1,(a1)+
+		rts
+	endi
+	
+	add.w	#2,(a1)+
+
+	rts
+	
+Mario_Path_ATK_Left:
+
+	move.l	a5,a6
+	sub.w	#$1,a6
+	
+	
+	cmp.b	#1,(a6)
+	if_eq
+		rts
+	endi
+	
+	move.w	#1,d3
+	
+
+	sub.w	#1,d2
+	move.w	d2,(a1)
+	
+	
+	move.l	a0,a1
+	;gauche
+	cmp.w	#23,d7
+	if_pl
+		add.w	#0,(a1)+
+		sub.w	d1,(a1)+
+		rts
+	endi
+	
+	add.w	#0,(a1)+
+	add.w	#2,(a1)+
+
+	rts
+	
+Mario_Path_ATK_Right:
+
+	move.l	a5,a6
+	add.w	#$1,a6
+	
+	
+	cmp.b	#1,(a6)
+	if_eq
+		rts
+	endi
+	
+	move.w	#1,d3
+	
+
+	add.w	#1,d2
+	move.w	d2,(a1)
+
+	
+	move.l	a0,a1
+	;droite
+	cmp.w	#23,d7
+	if_pl
+		add.w	#0,(a1)+
+		add.w	d1,(a1)+
+		rts
+	endi
+	
+	add.w	#0,(a1)+
+	sub.w	#2,(a1)+
+	
+	
+
+	rts
+
+	
+Mario_Path_ATK:
+	
+	clr.w	d1
+	clr.w	d3
+	
+	cmp.w	#16,d7
+	if_ne
+		move.w	#8,d1
+	endi
+	cmp.w	#18,d7
+	if_ne
+		move.w	#4,d1
+	endi
+	cmp.w	#20,d7
+	if_ne
+		move.w	#2,d1
+	endi
+	
+
+	move.w	(a4),d2
+	move.l	#map_collision,a5
+	add.w	d2,a5
+	
+	jsr Mario_Path_ATK_Right
+	
+	cmp.w	#1,d3
+	if_eq
+		jsr Mario_Path_ATK_Left
+	endi
+	cmp.w	#1,d3
+	if_eq
+		jsr Mario_Path_ATK_Up
+	endi
+	cmp.w	#1,d3
+	if_eq
+		jsr Mario_Path_ATK_Down
+	endi
+
+
+	rts
+	
+	
+Mario_Attack:
+
+	
+	lea MarioArmy,a0
+	lea MarioArmyst,a3
+	move.w	#15,d0
+	do
+	
+		move.l	a3,a1
+		add.w	#8,a1
+		
+		clr.w (a1)
+				
+		move.l	a3,a2
+		add.w	#4,a2
+		
+		move.l	a3,a4
+		add.w	#2,a4
+		
+		move.w (a3),d1	
+		move.w (a2),d7
+		cmp.w	#0,d1
+		if_eq
+			jsr Mario_Path_ATK
+		endi
+		
+		addi.w #1,(a2)
+		cmp.w  #30,(a2)
+		if_ne
+			clr.w (a2)
+		endi
+		add.w	#$6,a0
+		add.w	#$10,a3
+
+    while_dbra d0
+
+	rts
+	

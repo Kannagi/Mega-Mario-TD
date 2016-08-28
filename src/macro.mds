@@ -1,0 +1,233 @@
+if_eq	macro		
+	beq	L1\@!
+endm
+
+if_ne	macro		
+	bne	L1\@!
+endm
+
+if_pl	macro		
+	bpl	L1\@!
+endm
+
+if_mi	macro		
+	bmi	L1\@!
+endm
+
+if_le	macro		
+	ble	L1\@!
+endm
+
+if_ge	macro		
+	bge	L1\@!
+endm
+	
+endi	macro		
+	L1\@@:
+endm
+
+endie	macro		
+	L1\@@:
+	clr.b _else_
+endm
+
+
+else_	macro
+	
+	move.b #1,_else_
+	L1\@@:
+	
+	
+	cmp.b #0,_else_
+	bne	L1\@!
+endm
+
+
+
+while	macro		
+	jmp	L1\@@
+endm
+	
+do	macro		
+	L1\@!:
+endm
+
+while_eq	macro		
+	beq	L1\@@
+endm
+
+while_ne	macro		
+	bne	L1\@@
+endm
+
+while_pl	macro		
+	bpl	L1\@@
+endm
+
+while_mi	macro		
+	bmi	L1\@@
+endm
+
+while_ge	macro		
+	bge	L1\@@
+endm
+
+while_le	macro		
+	ble	L1\@@
+endm
+
+
+
+while_dbra	macro		
+	dbra.w \1,L1\@@
+endm
+
+
+
+joypad_event macro
+	move.b \3,d0
+	andi.b #\1,d0
+	cmpi.b #\1,d0
+	
+	if_ne
+		clr.b MEM_STDCTRL+\2
+	endi
+	
+	
+	if_eq
+		cmpi.w #$00,MEM_STDCTRL+\2
+		if_eq
+			move.b #2,MEM_STDCTRL+\2
+		else_
+			move.b #1,MEM_STDCTRL+\2
+		endie
+	endi
+endm
+
+_A	= 12
+_B 	= 8
+_C 	= 10
+_UP	= 0
+_DN	= 2
+_LT	= 4
+_RG	= 6
+_START = 14
+
+Text_Draw macro ;
+
+    VDP_Port_VRAMW #$A000+(2*\2)+($40*\3)    
+    
+   	lea	\1,a2
+	move.w #3,d7
+	do
+		clr.w	d0
+		clr.w	d1
+		move.b	(a2)+,d0
+		move.b	d0,d1
+		
+		
+		
+		cmp.w  #'A',d1
+		if_mi
+			cmp.w  #'Z'+1,d1
+			if_pl
+				addi.w	#$6228+$21+$8000,d0
+				subi.w	#'A',d0
+				
+				move.w	d0,VDP_DATA
+			endi
+		endi
+		
+		cmp.w  #'0',d1
+		if_mi
+			cmp.w  #'9'+1,d1
+			if_pl
+				addi.w	#$6228+$10+$8000,d0
+				subi.w	#'0',d0
+				
+				move.w	d0,VDP_DATA
+			endi
+		endi
+		
+		cmp.w  #' ',d1
+		if_ne
+			move.w	#0,VDP_DATA
+		endi
+
+		
+		
+		
+		cmp.b  #0,d1
+	while_ne
+	
+endm
+
+Digit_convert macro ;
+
+	clr.w 	d3
+	cmp.w #\1,d2
+	if_mi
+		do
+			addi.w	#$0001,d3
+			subi.w	#\1,d2
+			
+			cmpi.w  #\1,d2
+		while_pl
+	endi
+	
+	
+endm
+
+Text_Print macro ;
+	
+	VDP_Port_VRAMW #$A000+(2*\1)+($40*\2)
+	move.w 	#$6238,d0
+	Digit_convert 10000
+	add.w d3,d0
+	move.w  d0,VDP_DATA
+		
+	move.w 	#$6238,d0
+	Digit_convert 1000
+	add.w d3,d0
+	move.w  d0,VDP_DATA
+	
+	move.w 	#$6238,d0
+	Digit_convert 100
+	add.w d3,d0
+	move.w  d0,VDP_DATA
+	
+	move.w 	#$6238,d0
+	Digit_convert 10
+	add.w d3,d0
+	move.w  d0,VDP_DATA
+	
+	move.w 	#$6238,d0
+	Digit_convert 1
+	add.w d3,d0
+	move.w  d0,VDP_DATA
+		
+endm
+
+Text_Print8 macro ;
+	
+	
+	
+	VDP_Port_VRAMW #$A000+(2*\1)+($40*\2)
+	;move.w 	#$6238,d0
+	;Digit_convert 100
+	;add.w d3,d0
+	;move.w  d0,VDP_DATA
+	
+	
+	move.w 	#$6238,d0
+	Digit_convert 10
+	add.w d3,d0
+	move.w  d0,VDP_DATA
+	
+	move.w 	#$6238,d0
+	Digit_convert 1
+	add.w d3,d0
+	move.w  d0,VDP_DATA
+		
+endm
+

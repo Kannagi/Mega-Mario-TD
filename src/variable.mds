@@ -1,0 +1,41 @@
+
+vtimer	equ	$FF0000		; LONG
+_else_	equ	$FF0004		
+debug	equ	$FF0006		
+debug2	equ	$FF0008		
+
+MEM_STDCTRL	equ	$FF0100
+MarioArmy	equ	$FF0200
+MarioArmyst	equ	$FF0300
+
+
+MarioNb			equ	$FF0400
+Argent			equ	$FF0402
+TourNb			equ	$FF0404
+MarioAnim		equ	$FF0406
+EnemySpeed		equ	$FF0408
+MarioPV			equ	$FF040A
+Start			equ	$FF040C
+EnemyEnd		equ	$FF040E
+EnemyChange		equ	$FF0410
+
+EnemyArmy		equ	$FF0500
+EnemyArmyDgt	equ	$FF0600
+
+
+Selectx	equ	$FF0010
+Selecty	equ	$FF0012
+Selectm equ	$FF0014
+SelectTile 		equ	$FF0016
+SelectChoix 	equ	$FF0018
+SelectInit 		equ	$FF001A
+SelectChoixOld 	equ	$FF001C
+SelectxOld	equ	$FF0020
+SelectyOld	equ	$FF0022
+SelectTmp	equ	$FF0024
+
+map_collision equ $FF0F00
+
+Sprite	equ	$FF1000
+
+

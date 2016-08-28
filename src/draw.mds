@@ -1,0 +1,263 @@
+
+
+Draw_Sprite	macro		
+	move.w	\2,Sprite+0+(8*\1)
+	move.w	\3,Sprite+2+(8*\1)
+	move.w	\4,Sprite+4+(8*\1)
+	move.w	\5,Sprite+6+(8*\1)
+endm
+
+Draw_Sprite2	macro
+
+	
+	move.w	MarioArmy+0+6*\2,d0
+	move.w	#$050B+2*\2,d1
+	move.w	MarioArmy+4+6*\2,d2
+	move.w	MarioArmy+2+6*\2,d3
+	
+	cmp.w	#15,MarioAnim
+	if_mi
+		addi.w	#$0800,d2
+	endi
+	
+	move.w	d0,Sprite+0+(8*\1)
+	move.w	d1,Sprite+2+(8*\1)
+	move.w	d2,Sprite+4+(8*\1)
+	move.w	d3,Sprite+6+(8*\1)
+	
+	
+	subi.w	#$10,d0
+	addi.w	#1,d1
+	subi.w	#$20,d2
+	
+	move.w	d0,Sprite+0+(8*\1)+8
+	move.w	d1,Sprite+2+(8*\1)+8
+	move.w	d2,Sprite+4+(8*\1)+8
+	move.w	d3,Sprite+6+(8*\1)+8
+
+endm
+
+Draw_Sprite3	macro		
+	move.w	EnemyArmy+0+8*\1,d0
+	move.w	#$050B+32+\1,d1
+	move.w	EnemyArmy+4+8*\1,d2
+	move.w	EnemyArmy+2+8*\1,d3
+	
+
+	cmp.w	#15,MarioAnim
+	if_mi
+		addi.w	#4,d2
+	endi
+	
+	move.w	EnemyArmyDgt+2*\1,d5
+	cmp.w	#$0,d5
+	if_eq
+		
+		andi.w	#$01,d5
+		cmp.w	#$1,d5
+		if_ne
+			move.w	#$200,d0
+		endi
+	endi
+	
+	move.w	d0,Sprite+0+(8*\1)+8*42
+	move.w	d1,Sprite+2+(8*\1)+8*42
+	move.w	d2,Sprite+4+(8*\1)+8*42
+	move.w	d3,Sprite+6+(8*\1)+8*42
+endm
+
+Draw:
+
+	VDP_Port_VRAMW #$F400
+	
+	
+	lea	Sprite,a0
+	move.w	#4*64-1,d0
+	do
+		move.w	(a0)+,VDP_DATA
+    while_dbra d0
+    
+	;Select
+	Draw_Sprite 0,Selecty,#$0501,SelectTile,Selectx
+   
+	move.w	#$0020,d2
+	move.w	#$0024,d3
+	move.w	#$0028,d4
+	move.w	#$002C,d5
+	move.w	#$0030,d6
+
+	cmp.w #0,SelectChoix
+	if_ne
+		cmp.w	#15,MarioAnim
+		if_mi
+			addi.w	#$0800,d2
+		endi
+	endi
+	
+	cmp.w #1,SelectChoix
+	if_ne
+		cmp.w	#15,MarioAnim
+		if_mi
+			addi.w	#$0800,d3
+		endi
+	endi
+	
+	cmp.w #2,SelectChoix
+	if_ne
+		cmp.w	#15,MarioAnim
+		if_mi
+			addi.w	#$0800,d4
+		endi
+	endi
+	
+	cmp.w #3,SelectChoix
+	if_ne
+		cmp.w	#15,MarioAnim
+		if_mi
+			addi.w	#$0800,d5
+		endi
+	endi
+	
+	cmp.w #4,SelectChoix
+	if_ne
+		cmp.w	#15,MarioAnim
+		if_mi
+			addi.w	#$0800,d6
+		endi
+	endi
+   
+    ;Mario1 Menu
+    Draw_Sprite 1,#$80+28,#$0502,d2,#$80+8*3
+
+	;Mario2 Menu
+    Draw_Sprite 2,#$80+28,#$0503,d3,#$80+8*6
+    Draw_Sprite 3,#$70+28,#$0504,#$0804,#$80+8*6
+    
+    ;Mario3 Menu
+    Draw_Sprite 4,#$80+28,#$0505,d4,#$80+8*9
+    Draw_Sprite 5,#$70+28,#$0506,#$0808,#$80+8*9
+    
+    ;Mario4 Menu
+    Draw_Sprite 6,#$80+28,#$0507,d5,#$80+8*12
+    Draw_Sprite 7,#$70+28,#$0508,#$080C,#$80+8*12
+    
+    ;Mario5 Menu
+    Draw_Sprite 8,#$80+28,#$0509,d6,#$80+8*15
+    Draw_Sprite 9,#$70+28,#$050A,#$0810,#$80+8*15
+    
+    ;Army Mario
+    Draw_Sprite2 10,0
+    Draw_Sprite2 12,1
+    Draw_Sprite2 14,2
+    Draw_Sprite2 16,3
+	Draw_Sprite2 18,4
+	Draw_Sprite2 20,5
+	Draw_Sprite2 22,6
+    Draw_Sprite2 24,7
+    Draw_Sprite2 26,8
+	Draw_Sprite2 28,9
+	Draw_Sprite2 30,10
+	Draw_Sprite2 32,11
+	Draw_Sprite2 34,12
+	Draw_Sprite2 36,13
+	Draw_Sprite2 38,14
+	Draw_Sprite2 40,15
+	
+	
+	;Enemy
+	Draw_Sprite3 0
+	Draw_Sprite3 1
+	Draw_Sprite3 2
+	Draw_Sprite3 3
+	Draw_Sprite3 4
+	Draw_Sprite3 5
+	Draw_Sprite3 6
+	Draw_Sprite3 7
+	Draw_Sprite3 8
+	Draw_Sprite3 9
+	
+	jsr HUD_Text
+	
+	rts
+	
+
+HUD_Text:
+
+	;Argent
+	Text_Draw T_Argent,20,8
+	
+	move.w	Argent,d2
+	Text_Print 27,8
+	
+	;Mario Nombre
+	Text_Draw T_MarioNB,20,9
+	
+	move.w	MarioNb,d2
+	Text_Print8 27,9
+	
+	;TOUR
+	Text_Draw T_Tour,20,10
+	
+	move.w	TourNb,d2
+	Text_Print8 27,10
+	
+	;PV
+	Text_Draw T_PV,20,11
+	
+	move.w	MarioPV,d2
+	Text_Print8 27,11
+	
+	;INFO
+	move.w	#10,d3
+	move.w	#1,d4
+	
+	cmp.w	#1,SelectChoix
+	if_ne
+		move.w	#20,d3
+		move.w	#2,d4
+	endi
+	
+	cmp.w	#2,SelectChoix
+	if_ne
+		move.w	#30,d3
+		move.w	#3,d4
+	endi
+	
+	cmp.w	#3,SelectChoix
+	if_ne
+		move.w	#40,d3
+		move.w	#4,d4
+	endi
+	
+	cmp.w	#4,SelectChoix
+	if_ne
+		move.w	#50,d3
+		move.w	#5,d4
+	endi
+	
+	;INFO PRIX
+	Text_Draw T_COUT,20,2
+	
+	move.w	d3,d2
+	Text_Print8 27,2
+	
+	;INFO ATK
+	Text_Draw T_ATTACK,20,4
+	
+	move.w	d4,d2
+	Text_Print8 27,4
+	
+	
+	rts
+	
+	move.w	debug,d2
+	Text_Print 2,9
+	
+	move.w	debug2,d2
+	Text_Print 2,10
+	
+	
+	
+	
+	rts
+	

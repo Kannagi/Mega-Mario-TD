@@ -1,0 +1,104 @@
+
+
+load:
+
+	;Palette	
+	VDP_Port_CRAMW #$0000
+	
+	lea	palette_Mario,a2
+	move.w	#16-1,d0
+	do
+		move.w	(a2)+,VDP_DATA
+    while_dbra d0
+    
+	VDP_Port_CRAMW #$0040
+    
+    lea	palette_map,a2
+	move.w	#16-1,d0
+	do
+		move.w	(a2)+,VDP_DATA
+    while_dbra d0
+    
+    lea	palette_fontm,a2
+	move.w	#16-1,d0
+	do
+		move.w	(a2)+,VDP_DATA
+    while_dbra d0
+	
+	;Tiles DATA
+	VDP_Port_VRAMW #$0000
+	
+	lea	Mario,a2
+	move.w	#64*8-1,d0
+	do
+		move.l	(a2)+,VDP_DATA
+	while_dbra d0
+	
+	;ennemi
+	lea	Goomba,a2
+	move.w	#8*8-1,d0
+	do
+		move.l	(a2)+,VDP_DATA
+	while_dbra d0
+	
+	lea	Meduse,a2
+	move.w	#8*8-1,d0
+	do
+		move.l	(a2)+,VDP_DATA
+	while_dbra d0
+	
+	lea	Fantome,a2
+	move.w	#8*8-1,d0
+	do
+		move.l	(a2)+,VDP_DATA
+	while_dbra d0
+	
+	lea	Flame,a2
+	move.w	#8*8-1,d0
+	do
+		move.l	(a2)+,VDP_DATA
+	while_dbra d0
+	
+	lea	Chien,a2
+	move.w	#8*8-1,d0
+	do
+		move.l	(a2)+,VDP_DATA
+	while_dbra d0
+	
+	lea	Bomb,a2
+	move.w	#8*8-1,d0
+	do
+		move.l	(a2)+,VDP_DATA
+	while_dbra d0
+	
+	;map
+	VDP_Port_VRAMW #$4000
+	lea	map,a2
+	move.w	#40*8-1,d0
+	do
+		move.l	(a2)+,VDP_DATA
+	while_dbra d0
+	
+	lea	fontm,a2
+	move.w	#(128*8)-1,d0
+	do
+		move.l	(a2)+,VDP_DATA
+	while_dbra d0
+	
+	;Tiles MAP
+	VDP_Port_VRAMW #$C200
+	lea	map_tile,a2
+	move.w	#32*11-1,d0
+	do
+		move.l	(a2)+,VDP_DATA
+	while_dbra d0
+	
+	VDP_Port_VRAMW #$C000
+	lea	hud_tile,a2
+	move.w	#32*4-1,d0
+	do
+		move.l	(a2)+,VDP_DATA
+	while_dbra d0
+
+	rts
+	

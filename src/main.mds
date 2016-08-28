@@ -1,0 +1,239 @@
+
+	include "macro.mds"
+	include "MD.mds"
+	
+	include "variable.mds"
+
+	include "header.mds"
+	
+INT:    
+	rte
+
+HBlank:
+	rte
+
+	
+Main:
+
+	move.w  #$2300,sr
+
+Begin:
+	;clear ram
+	lea     $FF0000,a0
+	move.w  #$8000-1,d0
+	do
+		move.w  #$000,(a0)+
+    
+    while_dbra d0
+
+
+	;VDP Regiter init
+	VDP_PORT_Mode1 $00 ;
+	VDP_PORT_Mode2 $7C ; Genesis disp mode, Disp enabled, V int, DMA, PAL
+	VDP_PORT_Mode3 $00 ; full screen V scroll, full screen H scroll
+	VDP_PORT_Mode4 $00 ; Display 32 cell mode
+	
+	VDP_PORT_ScrollA $05	; $A000
+	VDP_PORT_ScrollB $06	; $C000
+	VDP_PORT_Window  $1C	; $E000
+	VDP_PORT_HScroll $3C	; $F000
+	VDP_PORT_Sprite  $7A	; $F400
+	VDP_PORT_Background $00	; Background color 0
+	
+	VDP_PORT_HINT $00		; H int register
+	
+	VDP_PORT_Auto $02
+	VDP_PORT_Scroll $00		; 32x32 scroll size
+	
+	jsr	init
+	jsr load
+
+	
+main_loop:
+
+	
+    
+    jsr Draw
+    
+	
+	jsr Joypad
+	
+	jsr Mario_Attack
+	jsr Enemy_Path
+	
+	
+	jsr Gameplay_Select
+	jsr Gameplay_Map
+	
+	
+	
+	jsr Start_pad
+
+
+	;var temp increment
+	addi.w #1,MarioAnim
+	cmp.w	#30,MarioAnim
+	if_ne
+		clr.w MarioAnim
+	endi
+	
+	addi.w #1,EnemySpeed
+	cmp.w  #3,EnemySpeed
+	if_ne
+		clr.w EnemySpeed
+	endi
+	addi.w #1,SelectTmp
+	cmp.w  #10,SelectTmp
+	if_ne
+		clr.w SelectTmp
+	endi
+	
+	
+	
+	jsr vsync
+	cmp.w	#0,MarioPV
+	if_ne
+		jmp Game_Over
+	endi
+	
+	 
+	bra main_loop
+
+	
+	
+Game_Over:
+
+	jsr Joypad
+	move.b	MEM_STDCTRL+_START,d1
+	cmp.b	#1,d1
+	if_ne
+		Text_Draw T_GME,11,15
+		jmp Begin
+		
+	endi
+
+	Text_Draw T_GM,11,15
+	jsr vsync 
+
+	bra Game_Over
+	
+Start_pad:
+
+	cmp	#0,Start
+	if_eq
+		rts
+	endi
+	
+	Text_Draw T_START2,8,27
+	
+	move.b	MEM_STDCTRL+_START,d1
+	cmp.b	#1,d1
+	if_ne
+		move.w	#1,Start
+		rts
+	endi
+	
+	
+	cmp.w	#15,MarioAnim
+	if_mi
+		Text_Draw T_START,8,27
+	endi
+	
+	rts
+	
+
+
+Joypad:
+	
+	
+	move.b	#$40,$a10003
+	;J1
+	joypad_event $01,$00,MD_JSCTRL1
+	joypad_event $02,$02,MD_JSCTRL1
+	joypad_event $04,$04,MD_JSCTRL1
+	joypad_event $08,$06,MD_JSCTRL1
+	joypad_event $10,$08,MD_JSCTRL1
+	joypad_event $20,$0A,MD_JSCTRL1
+	
+	move.b	#$00,$a10003
+	joypad_event $10,$0C,MD_JSCTRL1
+	joypad_event $20,$0E,MD_JSCTRL1
+
+	rts
+	
+	
+	include "VBlank.mds"
+	include "init.mds"
+	include "load.mds"
+	include "gameplay.mds"
+	include "gameplay_pp.mds"
+	
+	include "draw.mds"
+	include "ennemi.mds"
+	include "Marioatk.mds"
+
+;DATA
+	include "data.mds"
+	
+map:
+	include "map.asm"
+	
+fontm:
+	include "fontm.asm"
+	
+	
+Mario:
+	include "Mario.asm"
+	
+Goomba:
+	include "goomba.asm"
+	
+Meduse:
+	include "meduse.asm"
+	
+Fantome:
+	include "fantome.asm"
+
+Flame:
+	include "flame.asm"
+	
+Chien:
+	include "chien.asm"
+	
+Bomb:
+	include "bomb.asm"
+	
+
+	
+T_Argent:
+	dc.b "ARGENT ",0
+	
+T_MarioNB:
+	dc.b "MARIO     /16",0
+	
+T_Tour:
+	dc.b "TOUR ",0
+	
+T_PV:
+	dc.b "VIE ",0
+	
+T_START:
+	dc.b "START FOR BEGIN",0
+	
+T_START2:
+	dc.b "               ",0
+	
+T_COUT:
+	dc.b "COUT",0
+	
+T_ATTACK:
+	dc.b "ATTACK",0	
+	
+T_GM:
+	dc.b "GAME OVER",0
+	
+T_GME:
+	dc.b "         ",0	
+
+	org $20000
+	
